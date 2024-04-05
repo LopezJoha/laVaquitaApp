@@ -6,7 +6,7 @@ import user from "../images/user-48.png";
 export default function Header({ active, setActive, tabs }) {
   return (
     <>
-      <div className="w-screen flex  lg:flex-row justify-between bg-[#36190D] p-3 flex-wrap ">
+      <div className="w-screen flex  lg:flex-row justify-between bg-[#36190D] p-3 flex-wrap">
         <div className="logo flex items-end justify-around order-1 grow-0">
           <img src={logo} alt="logo" width={45} />
           <p className="text-center text-2xl lg:text-3xl ml-2 font-medium lg:font-extrabold text-white">
