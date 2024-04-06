@@ -1,10 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
 import Modal from "react-modal";
 import Button from "../Button.jsx";
-import { GroupsInfo } from "../../Constants/index.js";
+//import { GroupsInfo } from "../../Constants/index.js";
 import Group from "../Group.jsx";
 
 export default function Groups({ valor, colour }) {
+
+  const [groups, setGroups] = useState([]);
+
+ // Paso 3: Utiliza useEffect para realizar la solicitud de datos
+ useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/groups');
+        const data = await response.json();
+        setGroups(data); // Actualiza el estado con los grupos obtenidos
+      } catch (error) {
+        console.error('Error al obtener los grupos:', error);
+      }
+    };
+
+    fetchGroups();
+ }, []); 
   const customStyles = {
     content: {
       top: "50%",
@@ -48,7 +66,14 @@ export default function Groups({ valor, colour }) {
               <input placeholder="Nombre del grupo" />
               <icon></icon>
             </div>
-            <canvas></canvas>
+            <div className="flex w-full">
+              <div className="w-10 h-10 border-2 border-black border-solid"></div>
+              <div className="w-10 h-10 border-2 border-black border-solid"></div>
+              <div className="w-10 h-10 border-2 border-black border-solid"></div>
+              <div className="w-10 h-10 border-2 border-black border-solid"></div>
+              <div className="w-10 h-10 border-2 border-black border-solid"></div>
+              <div className="w-10 h-10 border-2 border-black border-solid"></div>
+            </div>
 
             <button>Enviar</button>
           </form>
@@ -61,7 +86,7 @@ export default function Groups({ valor, colour }) {
         </p>
       </div>
       <div className="flex flex-col md:flex-row md:flex-wrap md:content-center justify-around">
-        {GroupsInfo.map((group) => (
+        {groups.map((group) => (
           <Group
             debt={group.debt}
             name={group.name}
