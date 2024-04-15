@@ -10,22 +10,23 @@ const GroupService = () => {
     return db.find((group) => group.id === id);
   };
 
-  const createGroup = (req, res) => {
-    const group = req.body;
-    const groupName = req.body.name;
-    const groupBg = req.body.bgColour;
-    const groupExists = db.some((group) => group.name === groupName);
+  const createGroup = (newGroup) => {
+    console.info("Entro a createGroup");
+    const group = newGroup.body;
+    console.info(newGroup, "services");
+    const groupId = newGroup.id;
+    const groupExists = db.some((group) => group.id === groupId);
     if (groupExists) {
-      res.status(409);
       return console.info("El nombre de grupo ya ha sido usado");
     } else {
-      console.info(group);
-      db.push({
+      console.info(group, "services");
+      return db.push({
         group,
       });
-      return res.status(201).json(group);
     }
   };
+
+  
   return {
     getGroups,
     getGroupById,

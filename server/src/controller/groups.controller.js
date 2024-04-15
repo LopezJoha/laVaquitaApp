@@ -6,6 +6,7 @@ const GroupController = () => {
   const getGroups = (req, res) => {
     console.info("GetGroups");
     const groups = groupService.getGroups();
+    console.log(groups);
     return res.status(200).json({
       groups,
     });
@@ -26,7 +27,8 @@ const GroupController = () => {
   };
 
   const createGroup = (req, res) => {
-    const newGroup = groupService.createGroup(req.body.name, req.body.bgGround);
+    const newGroup = groupService.createGroup(req.body);
+    console.info(req.body, "controller");
     return res.status(201).json(newGroup);
   };
 
@@ -41,7 +43,7 @@ const GroupController = () => {
   return {
     getGroups,
     getGroupById,
-    createGroup
+    createGroup,
   };
 };
 

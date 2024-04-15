@@ -10,7 +10,7 @@ const GroupRouter = () => {
 
     router.get("/:id", groupController.getGroupById);
 
-    router.post("/group", groupController.createGroup);
+    router.post("/", groupController.createGroup);
 
     //router.put("/group/:id", groupController.updateGroup);
 

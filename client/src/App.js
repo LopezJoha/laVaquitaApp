@@ -13,8 +13,10 @@ function App() {
       <Header active={active} setActive={setActive} tabs={TABS} />
       <p />
       <p> Página Seleccionada: {active} </p>
-      <Groups valor={45000} />
-      <div></div>
+      {
+        active === "Grupos" ? 
+        <Groups valor={45000} /> : null
+      }
     </>
   );
 }
