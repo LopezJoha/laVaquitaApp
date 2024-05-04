@@ -8,13 +8,13 @@ const GroupRouter = () => {
     const router = express.Router();
     router.get("/", groupController.getGroups);
 
-    router.get("/:id", groupController.getGroupById);
+    router.get("/:id", groupController.getById);
 
     router.post("/", groupController.createGroup);
 
-    //router.put("/group/:id", groupController.updateGroup);
+    router.put("/:id", groupController.updateGroup);
 
-    //router.delete("/group/:id");
+    router.delete("/:id", groupController.deleteGroup);
 
     return router;
   };

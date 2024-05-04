@@ -6,17 +6,14 @@ import Groups from "./assets/Components/Pages/Groups";
 const TABS = ["Amigos", "Gastos", "Grupos"];
 
 function App() {
-  const [active, setActive] = useState(TABS[0]);
+  const [active, setActive] = useState(TABS[2]);
 
   return (
     <>
       <Header active={active} setActive={setActive} tabs={TABS} />
-      <p />
+
       <p> Página Seleccionada: {active} </p>
-      {
-        active === "Grupos" ? 
-        <Groups valor={45000} /> : null
-      }
+      {active === "Grupos" ? <Groups valor={45000} /> : null}
     </>
   );
 }
