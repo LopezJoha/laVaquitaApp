@@ -22,7 +22,6 @@ export default function Modal({
   closeModal,
   isEditing,
   setIsEditing,
-  groups,
   setGroups,
   currentGroup,
 }) {
@@ -43,7 +42,6 @@ export default function Modal({
         setGroups((prevGroups) => {
           return [...prevGroups, response.data];
         });
-
         setError(false);
         setMessageError("");
         setInputValue("");
