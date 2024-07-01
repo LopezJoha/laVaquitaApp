@@ -1,5 +1,5 @@
 import React from "react";
-import imagen from "../images/vaquita-nb.png";
+import imagen from "../assets/images/vaquita-nb.png";
 
 export default function Group({ group, funcionEditar, funcionEliminar }) {
   return (

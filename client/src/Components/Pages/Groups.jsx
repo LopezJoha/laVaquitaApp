@@ -5,6 +5,7 @@ import DeleteModal from "../DeleteModal.jsx";
 import Button from "../Button.jsx";
 import Group from "../Group.jsx";
 import axios from "axios";
+import Header from "../Header.jsx";
 
 const baseUrl = "http://localhost:3001/groups";
 

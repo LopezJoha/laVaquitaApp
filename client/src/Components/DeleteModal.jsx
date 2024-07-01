@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "./Button";
-import close from "../images/close.png";
+import close from "../assets/images/close.png";
 
 import axios from "axios";
 

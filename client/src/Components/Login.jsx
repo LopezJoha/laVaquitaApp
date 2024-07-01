@@ -1,8 +1,16 @@
 import React, { useRef, useState } from "react";
-import logoImage from "../images/Logo.png";
+import logoImage from "../assets/images/Logo.png";
 import Button from "./Button";
+import axios from "axios";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-export default function Login() {
+const urlRegister = "http://localhost:3001/users/";
+const urlLogin = "http://localhost:3001/auth/login";
+
+export default function Login({ setLoggedIn }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const input1Ref = useRef(null);
   const input2Ref = useRef(null);
   const input3Ref = useRef(null);
@@ -33,23 +41,30 @@ export default function Login() {
 
   const onIniciarSesion = () => {
     setShowLogin(true);
+    setMsgErrorEmail("");
   };
 
   const onRegister = () => {
     setShowLogin(false);
+    setMsgErrorEmail("");
   };
 
   const onNameChange = (e) => {
     setName(e.target.value);
+    console.log(e.target.value);
   };
 
   const onPasswordChange = (e) => {
     setPassword(e.target.value);
+    console.log(e.target.value);
   };
 
-  const nameValidation = (nme) => {
+  const nameValidation = () => {
     let result = false;
-    if (nme.length <= 100) {
+    if (name.length === 0) {
+      result = true;
+      setMsgErrorName("Agrega un nombre");
+    } else if (name.length > 0 && name.length <= 100) {
       result = false;
       setMsgErrorName("");
     } else {
@@ -80,7 +95,7 @@ export default function Login() {
     return result;
   };
 
-  const passwordValidation = (pw) => {
+  const passwordValidation = () => {
     setMsgErrorPassword("");
     let result = false;
     let msg = "";
@@ -88,34 +103,34 @@ export default function Login() {
     const rgExp =
       /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,15}$/;
 
-    if (rgExp.test(pw)) {
+    if (rgExp.test(password)) {
       setMsgErrorPassword("");
       result = false;
       return result;
     } else {
-      if (pw.length === 0) {
+      if (password.length === 0) {
         msg = "El campo no puede estar vacío, agrega una contraseña";
         setMsgErrorPassword(msg);
         result = true;
       } else {
         msg = "La contraseña debe:\n";
-        if (pw.length < 8) {
+        if (password.length < 8) {
           msg += "Contener minimo 8 carácteres.\n";
           result = true;
         }
-        if (pw.length > 15) {
+        if (password.length > 15) {
           msg += "Contener maximo 15 carácteres.\n";
           result = true;
         }
-        if (!/(?=.*?[A-Z])/.test(pw)) {
+        if (!/(?=.*?[A-Z])/.test(password)) {
           msg += "Contener al menos una letra mayúscula.\n";
           result = true;
         }
-        if (!/(?=.*?[a-z])/.test(pw)) {
+        if (!/(?=.*?[a-z])/.test(password)) {
           msg += "Contener al menos una letra minúscula.\n";
           result = true;
         }
-        if (!/(?=.*?[0-9])/.test(pw)) {
+        if (!/(?=.*?[0-9])/.test(password)) {
           msg += "Contener al menos un número.\n";
           result = true;
         }
@@ -134,42 +149,98 @@ export default function Login() {
   const onEmailChange = (e) => {
     let emailLowerCase = e.target.value.toLowerCase();
     setEmail(emailLowerCase);
+    console.log(emailLowerCase);
   };
 
-  const sendInfoLogin = (e) => {
+  const sendInfoLogin = async (e, email, password) => {
     e.preventDefault();
     const wrongEmail = emailValidation();
+    const wrongPassword = passwordValidation();
 
-    if (!wrongEmail && password.length !== 0) {
-      console.log("Puedes Ingresar");
-      // Codigo del request
-    } else {
-      console.log("Hay un error");
+    if (!wrongEmail && !wrongPassword) {
+      await axios({
+        method: "post",
+        url: urlLogin,
+        data: { email: `${email}`, password: `${password}` },
+      })
+        .then((response) => {
+          console.log(response.data);
+          if (response.data.token) {
+            sessionStorage.setItem("token", response.data.token);
+            window.dispatchEvent(new Event("storage"));
+            navigate("/", { replace: true });
+          } else {
+            setMsgErrorPassword("An error ocurred");
+          }
+          setLoggedIn(true);
+          //setNewUser(newUser);
+        })
+        .catch((error) => {
+          console.error(error.response);
+          // console.log(error.response.data.message);
+          console.log(error.message);
+
+          setMsgErrorPassword("Email o password incorrecto!");
+        });
+
+      setEmail("");
+      setPassword("");
     }
   };
+  const createUser = async (newUser) => {
+    axios({
+      method: "post",
+      url: urlRegister,
+      data: newUser,
+    })
+      .then((response) => {
+        console.log(response);
+        console.log(response.data);
+        if (response.data.token) {
+          sessionStorage.setItem("token", response.data.token);
+          window.dispatchEvent(new Event("storage"));
+          navigate("/", { replace: true });
+        } else {
+          setMsgErrorPassword("An error ocurred");
+        }
+        setLoggedIn(true);
+        //setNewUser(newUser);
+      })
+      .catch((error) => {
+        console.error(error.response);
+        // console.log(error.response.data.message);
+        console.log(error.message);
+        if (error.response.status === 409) {
+          setMsgErrorPassword("El correo ya se encuentra registrado!");
+        } else {
+          alert("Error creando el usuario, intenta nuevamente");
+        }
+      });
+    setName("");
+    setEmail("");
+    setPassword("");
+  };
 
-  const sendInfoRegister = (e) => {
+  const sendInfoRegister = async (e) => {
     e.preventDefault();
 
-    const wrongName = nameValidation(name);
+    const wrongName = nameValidation();
     const wrongEmail = emailValidation();
-    const wrongPassword = passwordValidation(password);
+    const wrongPassword = passwordValidation();
 
     if (!wrongName && !wrongEmail && !wrongPassword) {
       console.log("Puedes Registrar el usuario");
       //Codigo del request
+      await createUser({
+        name: `${name}`,
+        email: `${email}`,
+        password: `${password}`,
+      });
     } else {
-      console.log(
-        "Revisar Errores: ",
-        "name ",
-        wrongName,
-        "email",
-        wrongEmail,
-        "password",
-        wrongPassword
-      );
+      // setMsgErrorPassword("Error creando el usuario, Intenta nuevamente");
     }
   };
+
   return (
     <div className="h-screen flex justify-center">
       <div className="principal w-full h-full flex flex-col items-center justify-center lg:max-w-[100%] lg:flex-row p-2">
@@ -209,7 +280,10 @@ export default function Login() {
         </div>
         <div className="seccion2 h-[50%] lg:w-[50%] lg:h-full lg:bg-[#1E1E1E] lg:flex lg:justify-center ">
           {showLogin ? (
-            <form className="w-full max-w-[520px] px-2 h-full flex flex-col justify-start items-center gap-5 lg:max-w-[420px] lg:justify-center lg:gap-10">
+            <form
+              onSubmit={(e) => sendInfoLogin(e, email, password)}
+              className="w-full max-w-[520px] px-2 h-full flex flex-col justify-start items-center gap-5 lg:max-w-[420px] lg:justify-center lg:gap-10"
+            >
               <p className="font-medium text-[#7B4343] text-2xl text-center lg:text-4xl lg:text-white">
                 Iniciar Sesión
               </p>
@@ -230,6 +304,7 @@ export default function Login() {
                     type="email"
                     name="email"
                     id="email"
+                    value={email}
                     onChange={(e) => onEmailChange(e)}
                   />
                   <svg
@@ -263,6 +338,7 @@ export default function Login() {
                     placeholder="*********"
                     name="password"
                     id="password"
+                    value={password}
                     onChange={(e) => onPasswordChange(e)}
                   />
                   <svg
@@ -288,18 +364,10 @@ export default function Login() {
                 ) : null}
               </div>
               <div className="w-full flex flex-col justify-center lg:w-[70%]">
-                <Button
-                  text="Ingresar"
-                  disabled={false}
-                  funcion={(e) => sendInfoLogin(e)}
-                />
+                <Button text="Ingresar" disabled={false} type={"submit"} />
               </div>
               <div className="w-full flex flex-col justify-center  lg:hidden">
-                <Button
-                  text="Registrarme"
-                  disabled={false}
-                  funcion={() => onRegister()}
-                />
+                <Button text="Registrarme" disabled={false} type={"submit"} />
               </div>
               <div className="parrafo olvideCotraseña">
                 <a href="/" className="recuperarClave lg:text-white">
@@ -308,7 +376,10 @@ export default function Login() {
               </div>
             </form>
           ) : (
-            <form className="w-full max-w-[520px] px-2 h-full flex flex-col justify-start items-center gap-5 lg:max-w-[420px] lg:justify-center lg:gap-10">
+            <form
+              onSubmit={(e) => sendInfoRegister(e)}
+              className="w-full max-w-[520px] px-2 h-full flex flex-col justify-start items-center gap-5 lg:max-w-[420px] lg:justify-center lg:gap-10"
+            >
               <p className="font-medium text-[#7B4343] text-2xl text-center lg:text-4xl lg:text-white ">
                 Registro
               </p>
@@ -329,6 +400,7 @@ export default function Login() {
                     placeholder="Nombre"
                     name="name"
                     id="name"
+                    value={name}
                     onChange={(e) => onNameChange(e)}
                   />
                   <svg
@@ -367,6 +439,7 @@ export default function Login() {
                     name="email"
                     id="email"
                     onChange={(e) => onEmailChange(e)}
+                    value={email}
                   />
                   <svg
                     width="24"
@@ -399,6 +472,7 @@ export default function Login() {
                     placeholder="*********"
                     name="password"
                     id="password"
+                    value={password}
                     onChange={(e) => onPasswordChange(e)}
                   />
                   <svg
@@ -426,13 +500,7 @@ export default function Login() {
                 ) : null}
               </div>
               <div className="w-full flex flex-col justify-center lg:w-[70%]">
-                <Button
-                  text="Registrarme"
-                  disabled={false}
-                  funcion={(e) => {
-                    sendInfoRegister(e);
-                  }}
-                />
+                <Button text="Registrarme" disabled={false} type={"submit"} />
               </div>
             </form>
           )}

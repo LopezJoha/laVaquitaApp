@@ -1,6 +1,7 @@
-import db from "../dataBase/database.js";
+//import db from "../dataBase/database.js";
 
 const GroupService = () => {
+  /*
   const getGroups = () => {
     return db;
   };
@@ -87,7 +88,7 @@ const GroupService = () => {
     createGroup,
     updateGroup,
     deleteGroup,
-  };
+  };*/
 };
 
 export { GroupService };

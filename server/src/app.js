@@ -1,15 +1,22 @@
 import express from "express";
 import cors from "cors";
-import { GroupRouter } from "./routes/groups.router.js";
+import passport from "passport";
+import dotenv from "dotenv";
+//import { GroupRouter } from "./routes/groups.router.js";
+import { UserRouter } from "./routes/user.router.js";
+import { AuthRouter } from "./routes/auth.router.js";
 
+dotenv.config();
 const app = express();
-
-const port = 3001;
+const PORT = 3001;
 
 app.use(express.json());
 app.use(cors());
-app.use("/groups", GroupRouter().registerRoutes());
+app.use(passport.initialize());
 
-app.listen(port, () => {
-  console.log(`El puerto está escuchando por el puerto ${port}`);
+app.use("/users", UserRouter().registerRoutes());
+app.use("/auth", AuthRouter().registerRoutes());
+
+app.listen(PORT, () => {
+  console.log(`El puerto está escuchando por el puerto ${PORT}`);
 });

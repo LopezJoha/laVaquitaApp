@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Button({ text, funcion, disabled}) {
+export default function Button({ text, funcion, disabled, type}) {
   return (
     <button
       className={`${
@@ -10,6 +10,7 @@ export default function Button({ text, funcion, disabled}) {
       } p-2 px-3.5 text-white rounded-lg `}
       onClick={funcion}
       disabled={disabled}
+      type={type}
       
     >
       {text}

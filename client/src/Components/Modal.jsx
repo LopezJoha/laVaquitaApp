@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Button from "./Button";
-import close from "../images/close.png";
-import groupImg from "../images/group.png";
+import close from "../assets/images/close.png";
+import groupImg from "../assets/images/group.png";
 import axios from "axios";
 const url = "http://localhost:3001/groups/";
 const colors = [
