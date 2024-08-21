@@ -4,13 +4,10 @@ import userSchema from "../validations/user.schema.validation.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import connectionPool from "../lib/connection.js";
-
 const UserController = () => {
   const userService = UserService();
 
   const getById = async (req, res) => {
-    console.log(2.1, "[User] Controller Get By Id");
-
     const user = await userService.getById(req.params.id);
 
     if (!user) {
@@ -34,14 +31,12 @@ const UserController = () => {
     );
 
     if (existingUser.rows.length > 0) {
-      console.log("El correo electrónico ya está registrado");
       return res
         .status(409)
         .json({ message: "El correo electrónico ya está registrado" });
     }
 
     try {
-      console.log("Controller");
       const { error, value } = userSchema.validate(req.body, {
         abortEarly: false,
         stripUnknown: true,
@@ -52,10 +47,12 @@ const UserController = () => {
           messages: error.details.map((detail) => detail.message),
         });
       }
+
+      let hashPassword = await bcrypt.hash(value.password, 10);
       const sanitizedBody = {
         name: value.name,
         email: value.email,
-        password: await bcrypt.hash(value.password, 10),
+        password: hashPassword,
       };
 
       const usuario = await userService.createUser(sanitizedBody);
@@ -76,8 +73,6 @@ const UserController = () => {
   };
 
   const getByEmail = async (req, res) => {
-    console.log(2.2, "[User] Controller Get By Email");
-
     const user = await userService.getByEmail(req.params.email);
 
     if (!user) {
@@ -91,10 +86,30 @@ const UserController = () => {
     });
   };
 
+  const getByCredentials = async (req, res) => {
+    try {
+      const user = await userService.getByCredentials(
+        req.params.email,
+        req.params.password
+      );
+      if (!user) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: "Usuario No encontrado",
+        });
+      }
+      return res.status(StatusCodes.OK).json({
+        message: "Usuario Autorizado",
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  };
+
   return {
     getById,
     createUser,
     getByEmail,
+    getByCredentials,
   };
 };
 

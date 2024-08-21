@@ -2,62 +2,30 @@ import "./App.css";
 import React, { useState } from "react";
 import Login from "./Components/Login";
 import Header from "./Components/Header";
-import Groups from "./Components/Pages/Groups";
 import { Route, Routes } from "react-router-dom";
-import ProtectedRoute from "./Components/Auth/ProtectedRoute";
+import ProtectedRoutes from "./Components/Auth/ProtectedRoute";
 import HomePage from "./Components/Pages/HomePage";
+import Groups from "./Components/Pages/Groups";
 import Amigos from "./Components/Pages/Amigos";
 import Gastos from "./Components/Pages/Gastos";
 import MyAccountPage from "./Components/Pages/MyAccountPage";
 import NotFoundPage from "./Components/Pages/NotFoundPage";
+import { useAuth } from "./Components/hooks/useAuth";
 
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(false);
 
   return (
     <div>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <HomePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/groups"
-          element={
-            <ProtectedRoute>
-              <Groups />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/friends"
-          element={
-            <ProtectedRoute>
-              <Amigos />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/expenses"
-          element={
-            <ProtectedRoute>
-              <Gastos />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/my-account"
-          element={
-            <ProtectedRoute>
-              <MyAccountPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/login" element={<Login setLoggedIn={setLoggedIn} />} />
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/" element={<HomePage />}>
+            <Route path="/groups" element={<Groups />} />
+            <Route path="/friends" element={<Amigos />} />
+            <Route path="/expenses" element={<Gastos />} />
+            <Route path="/my-account" element={<MyAccountPage />} />
+          </Route>
+        </Route>
+        <Route path="/login" element={<Login />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>

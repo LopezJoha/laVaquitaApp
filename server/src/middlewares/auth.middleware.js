@@ -1,17 +1,17 @@
-import passport from 'passport';
+import passport from "passport";
 
 const pathsToBypassAuthentication = [
   {
-    path: '/auth/login',
-    method: 'POST',
+    path: "/auth/login",
+    method: "POST",
   },
   {
-    path: '/users',
-    method: 'POST',
+    path: "/users",
+    method: "POST",
   },
 ];
 
-const authenticateJWT = passport.authenticate('jwt', { session: false });
+const authenticateJWT = passport.authenticate("jwt", { session: false });
 
 export function applyJWTAuthentication(req, res, next) {
   if (

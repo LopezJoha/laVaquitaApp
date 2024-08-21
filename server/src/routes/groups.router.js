@@ -6,15 +6,15 @@ const GroupRouter = () => {
 
   const registerRoutes = () => {
     const router = express.Router();
-    router.get("/", groupController.getGroups);
+    router.get("/", groupController.getAll);
 
     router.get("/:id", groupController.getById);
 
     router.post("/", groupController.createGroup);
 
-    router.put("/:id", groupController.updateGroup);
+    router.put("/:id", groupController.editById);
 
-    router.delete("/:id", groupController.deleteGroup);
+    router.delete("/:id", groupController.removeById);
 
     return router;
   };

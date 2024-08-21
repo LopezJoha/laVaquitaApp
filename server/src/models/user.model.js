@@ -3,8 +3,7 @@ import bcrypt from "bcrypt";
 
 const UserModel = () => {
   const createUser = async (user) => {
-    console.log("Model");
-    user.password = await bcrypt.hash(user.password, 10);
+
     const { name, email, password } = user;
 
     const client = await connectionPool.connect();
@@ -16,7 +15,6 @@ const UserModel = () => {
     );
 
     client.release();
-    console.log(result.rows[0]);
 
     return result.rows[0];
   };
@@ -41,14 +39,44 @@ const UserModel = () => {
     ]);
 
     client.release();
-   
+
     return result.rows[0];
+  };
+
+  const getByCredentials = async (email, password) => {
+    const client = await connectionPool.connect();
+
+    try {
+      const result = await client.query(
+        "SELECT * FROM Users WHERE email = $1",
+        [email]
+      );
+
+      const user = result.rows[0];
+      if (!user) {
+        return null;
+      }
+
+      const passwordSaved = user.password;
+      const match = await bcrypt.compare(password, passwordSaved);
+
+      if (match) {
+        return user;
+      } else {
+        return null;
+      }
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
   };
 
   return {
     createUser,
     getById,
     getByEmail,
+    getByCredentials,
   };
 };
 

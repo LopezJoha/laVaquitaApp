@@ -1,8 +1,13 @@
 import React, { useRef, useState } from "react";
 import logoImage from "../assets/images/Logo.png";
-import Button from "./Button";
+import Button from "./Ui/Button";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import EyeIcon from "../assets/EyeIcon";
+import EyeOffIcon from "../assets/EyeOffIcon";
+import { useSelector, useDispatch } from "react-redux";
+import { setToken } from "../store/slices/user";
+import { setUserId } from "../store/slices/user";
 
 const urlRegister = "http://localhost:3001/users/";
 const urlLogin = "http://localhost:3001/auth/login";
@@ -10,6 +15,7 @@ const urlLogin = "http://localhost:3001/auth/login";
 export default function Login({ setLoggedIn }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const input1Ref = useRef(null);
   const input2Ref = useRef(null);
@@ -26,6 +32,9 @@ export default function Login({ setLoggedIn }) {
   const [msgErrorName, setMsgErrorName] = useState("");
   const [msgErrorEmail, setMsgErrorEmail] = useState("");
   const [msgErrorPassword, setMsgErrorPassword] = useState("");
+
+  const [visible1, setVisible1] = useState(false);
+  const [visible2, setVisible2] = useState(false);
 
   const handleInputClick = (inputRef) => {
     inputRef.current.focus();
@@ -165,8 +174,10 @@ export default function Login({ setLoggedIn }) {
       })
         .then((response) => {
           console.log(response.data);
-          if (response.data.token) {
+          if (response.data) {
             sessionStorage.setItem("token", response.data.token);
+            dispatch(setToken(response.data.token));
+            dispatch(setUserId(response.data.userId));
             window.dispatchEvent(new Event("storage"));
             navigate("/", { replace: true });
           } else {
@@ -288,7 +299,7 @@ export default function Login({ setLoggedIn }) {
                 Iniciar Sesión
               </p>
 
-              <div className="login w-full flex flex-col content-center gap-10 my-8">
+              <div className="login w-full flex flex-col content-center gap-2 lg:gap-10 ">
                 <div
                   className={`border-2 ${
                     focusedInput === 1 ? "border-green-500" : "border-black"
@@ -324,7 +335,7 @@ export default function Login({ setLoggedIn }) {
                   <p className="text-red-600 text-base">{msgErrorEmail}</p>
                 ) : null}
                 <div
-                  className={`border-2 ${
+                  className={`flex justify-between items-center border-2 ${
                     focusedInput === 2 ? "border-green-500" : "border-black"
                   } rounded-md input-Container w-full flex justify-between p-1 px-2 lg:bg-white`}
                 >
@@ -334,30 +345,16 @@ export default function Login({ setLoggedIn }) {
                     onBlur={handleBlur}
                     ref={input2Ref}
                     className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
-                    type="password"
+                    type={visible1 ? "text" : "password"}
                     placeholder="*********"
                     name="password"
                     id="password"
                     value={password}
                     onChange={(e) => onPasswordChange(e)}
                   />
-                  <svg
-                    width="24"
-                    height="27"
-                    viewBox="0 0 24 27"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M19.79 13.93C17.73 15.98 14.78 16.61 12.19 15.8L7.48002 20.5C7.14002 20.85 6.47002 21.06 5.99002 20.99L3.81002 20.69C3.09002 20.59 2.42002 19.91 2.31002 19.19L2.01002 17.01C1.94002 16.53 2.17002 15.86 2.50002 15.52L7.20002 10.82C6.40002 8.22001 7.02002 5.27001 9.08002 3.22001C12.03 0.270007 16.82 0.270007 19.78 3.22001C22.74 6.17001 22.74 10.98 19.79 13.93Z"
-                      stroke="#292D32"
-                    />
-                    <path d="M6.89001 16.49L9.19001 18.79" stroke="#292D32" />
-                    <path
-                      d="M14.5 10C15.3284 10 16 9.32843 16 8.5C16 7.67157 15.3284 7 14.5 7C13.6716 7 13 7.67157 13 8.5C13 9.32843 13.6716 10 14.5 10Z"
-                      stroke="#292D32"
-                    />
-                  </svg>
+                  <div className="" onClick={() => setVisible1(!visible1)}>
+                    {visible1 ? <EyeIcon /> : <EyeOffIcon />}
+                  </div>
                 </div>
                 {msgErrorPassword !== "" ? (
                   <p className="text-red-600 text-base">{msgErrorPassword}</p>
@@ -367,7 +364,11 @@ export default function Login({ setLoggedIn }) {
                 <Button text="Ingresar" disabled={false} type={"submit"} />
               </div>
               <div className="w-full flex flex-col justify-center  lg:hidden">
-                <Button text="Registrarme" disabled={false} type={"submit"} />
+                <Button
+                  text="Registrarme"
+                  disabled={false}
+                  funcion={() => onRegister()}
+                />
               </div>
               <div className="parrafo olvideCotraseña">
                 <a href="/" className="recuperarClave lg:text-white">
@@ -378,13 +379,13 @@ export default function Login({ setLoggedIn }) {
           ) : (
             <form
               onSubmit={(e) => sendInfoRegister(e)}
-              className="w-full max-w-[520px] px-2 h-full flex flex-col justify-start items-center gap-5 lg:max-w-[420px] lg:justify-center lg:gap-10"
+              className="w-full max-w-[520px] px-2 h-full flex flex-col justify-start items-center  lg:max-w-[420px] lg:justify-center gap-2 lg:gap-10"
             >
               <p className="font-medium text-[#7B4343] text-2xl text-center lg:text-4xl lg:text-white ">
                 Registro
               </p>
 
-              <div className="login w-full flex flex-col content-center gap-10 my-8">
+              <div className="login w-full flex flex-col content-center gap-2 lg:gap-10 ">
                 <div
                   className={`border-2 ${
                     focusedInput === 1 ? "border-green-500" : "border-black"
@@ -468,30 +469,16 @@ export default function Login({ setLoggedIn }) {
                     onBlur={handleBlur}
                     ref={input3Ref}
                     className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
-                    type="password"
+                    type={visible2 ? "text" : "password"}
                     placeholder="*********"
                     name="password"
                     id="password"
                     value={password}
                     onChange={(e) => onPasswordChange(e)}
                   />
-                  <svg
-                    width="24"
-                    height="27"
-                    viewBox="0 0 24 27"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M19.79 13.93C17.73 15.98 14.78 16.61 12.19 15.8L7.48002 20.5C7.14002 20.85 6.47002 21.06 5.99002 20.99L3.81002 20.69C3.09002 20.59 2.42002 19.91 2.31002 19.19L2.01002 17.01C1.94002 16.53 2.17002 15.86 2.50002 15.52L7.20002 10.82C6.40002 8.22001 7.02002 5.27001 9.08002 3.22001C12.03 0.270007 16.82 0.270007 19.78 3.22001C22.74 6.17001 22.74 10.98 19.79 13.93Z"
-                      stroke="#292D32"
-                    />
-                    <path d="M6.89001 16.49L9.19001 18.79" stroke="#292D32" />
-                    <path
-                      d="M14.5 10C15.3284 10 16 9.32843 16 8.5C16 7.67157 15.3284 7 14.5 7C13.6716 7 13 7.67157 13 8.5C13 9.32843 13.6716 10 14.5 10Z"
-                      stroke="#292D32"
-                    />
-                  </svg>
+                  <div className="" onClick={() => setVisible2(!visible2)}>
+                    {visible2 ? <EyeIcon /> : <EyeOffIcon />}
+                  </div>
                 </div>
                 {msgErrorPassword !== "" ? (
                   <p className="text-red-600 text-base mt-2 whitespace-pre-line">
@@ -501,6 +488,13 @@ export default function Login({ setLoggedIn }) {
               </div>
               <div className="w-full flex flex-col justify-center lg:w-[70%]">
                 <Button text="Registrarme" disabled={false} type={"submit"} />
+              </div>
+              <div className="w-full flex flex-col justify-center  lg:hidden">
+                <Button
+                  text="Iniciar Sesión"
+                  disabled={false}
+                  funcion={() => onIniciarSesion()}
+                />
               </div>
             </form>
           )}

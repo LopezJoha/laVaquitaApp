@@ -1,20 +1,22 @@
 import React, { useState } from "react";
-import Button from "./Button";
+import Button from "./Ui/Button";
 import close from "../assets/images/close.png";
 import groupImg from "../assets/images/group.png";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+
 const url = "http://localhost:3001/groups/";
 const colors = [
-  "white",
-  "pink",
-  "red",
-  "green",
-  "purple",
-  "orange",
-  "yellow",
-  "black",
-  "bluelight",
-  "orangered",
+  "#FFFFFF", // white
+  "#FFC0CB", // pink
+  "#FF0000", // red
+  "#008000", // green
+  "#800080", // purple
+  "#FFA500", // orange
+  "#FFFF00", // yellow
+  "#000000", // black
+  "#ADD8E6", // bluelight
+  "#FF4500", // orangered
 ];
 export default function Modal({
   isOpen,
@@ -30,7 +32,12 @@ export default function Modal({
   const [error, setError] = useState(false);
   const [messageError, setMessageError] = useState("");
 
+  const ownerUserId = useSelector((state) => state.userReducer.userId);
+  
+
   const createGroup = async (newGroup) => {
+    console.log(ownerUserId);
+    console.log(newGroup);
     axios({
       method: "post",
       url,
@@ -39,9 +46,6 @@ export default function Modal({
       .then((response) => {
         console.log(response);
         console.log(response.data);
-        setGroups((prevGroups) => {
-          return [...prevGroups, response.data];
-        });
         setError(false);
         setMessageError("");
         setInputValue("");
@@ -56,6 +60,7 @@ export default function Modal({
   };
 
   const editGroup = async (id, group) => {
+    console.log(group);
     axios({
       method: "put",
       url: `http://localhost:3001/groups/${id}`,
@@ -70,12 +75,13 @@ export default function Modal({
 
           if (groupIndex >= 0) {
             copy[groupIndex] = response.data;
+            console.log(response.data);
           }
           return copy;
         });
 
         setInputValue("");
-        //alert("Grupo Modificado con exito!");
+        alert("Grupo Modificado con exito!");
         setIsOpen(false);
         setIsEditing(false);
       })
@@ -89,13 +95,15 @@ export default function Modal({
 
   const onSubmit = async () => {
     if (!isEditing) {
+      console.log(ownerUserId);
       await createGroup({
-        id: inputValue,
+        userid: ownerUserId,
+        owneruserid: ownerUserId,
         name: inputValue,
-        bgColour: active,
+        color: active,
       });
     } else {
-      await editGroup(currentGroup.id, { name: inputValue, bgColour: active });
+      await editGroup(currentGroup.id, { name: inputValue, color: active });
     }
   };
 

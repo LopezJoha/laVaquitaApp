@@ -1,16 +1,11 @@
 import { GroupService } from "../services/group.service.js";
+import groupsSchemaValidation from "../validations/groups.schema.validation.js";
+import { StatusCodes } from "http-status-codes";
 
 const GroupController = () => {
-  const groupService = GroupService();
+  console.log(2, "[Group] Controller");
 
-  const getGroups = (req, res) => {
-    console.info("GetGroups");
-    const groups = groupService.getGroups();
-    console.log(groups);
-    return res.status(200).json({
-      groups,
-    });
-  };
+  const groupService = GroupService();
 
   const getById = async (req, res) => {
     console.log(2.1, "[Group] Controller Get By Id");
@@ -19,64 +14,128 @@ const GroupController = () => {
 
     if (!group) {
       return res
-        .status(404)
+        .status(StatusCodes.NOT_FOUND)
         .json({ message: `Group with id ${req.params.id} does not exist` });
     }
 
-    return res.status(200).json({
+    return res.status(StatusCodes.OK).json({
       group,
     });
   };
 
-  const createGroup = (req, res) => {
-    const newGroup = groupService.createGroup(req.body);
-    console.info(req.body, "controller linea 33");
-    if (newGroup === null) {
-      return res.status(404).json({ message: `Id ya existe` });
-    } else if (newGroup === "repeated") {
-      return res.status(404).json({
-        message: `El nombre del grupo ya ha sido usado, por favor ingrese uno nuevo`,
+  const getAll = async (req, res) => {
+    console.log(2.1, "[Group] Controller Get All");
+
+    const groups = await groupService.getAll();
+
+    return res.status(StatusCodes.OK).json({
+      groups,
+    });
+  };
+
+  const createGroup = async (req, res) => {
+    console.log(2.1, "[Group] Controller Create");
+    console.log(req.body, "linea 38 controller");
+
+    const { error, value } = groupsSchemaValidation.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    if (error) {
+      console.log(error);
+      console.log("Mensaje linea 47 ", StatusCodes.BAD_REQUEST);
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        messages: error.details.map((detail) => detail.message),
       });
-    } else if (newGroup === "long") {
-      return res.status(404).json({ message: `Nombre demasiado largo` });
     }
-    return res.status(201).json(newGroup);
+
+    // creating our own body only with the fields we really need (name & color only)
+    // doing this we discard the rest of the fields we may receive in the body
+    const sanitizedBody = {
+      ...value,
+      userid: req.body.userid,
+      owneruserid: req.body.owneruserid,
+      name: req.body.name,
+      color: req.body.color,
+    };
+
+    try {
+      const group = await groupService.create(sanitizedBody);
+      console.log("Linea 65 ", group);
+
+      if (group) {
+        console.log(res.status(StatusCodes.CREATED).json({ group }));
+        return res.status(StatusCodes.CREATED).json({ group });
+      } else {
+        return res
+          .status(StatusCodes.CONFLICT)
+          .json({ message: "An error ocurred" });
+      }
+    } catch (error) {
+      return res
+        .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message });
+    }
   };
 
-  const updateGroup = (req, res) => {
-    console.info("Actualizando Grupo");
-    
-    const updated = groupService.updateGroup(req.params.id, req.body);
+  const editById = async (req, res) => {
+    console.log(2.1, "[Group] Controller Edit");
 
-    if (updated) {
-      return res.status(201).json(updated);
+    const { error, value } = groupsSchemaValidation.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    if (error) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        messages: error.details.map((detail) => detail.message),
+      });
     }
 
-    return res.status(404).json({
-      message: `Group with id ${req.params.id} does not exist`,
-    });
+    try {
+      const group = await groupService.editById(req.params.id, value);
+
+      if (group) {
+        return res.status(StatusCodes.OK).json({ group });
+      } else {
+        return res
+          .status(StatusCodes.CONFLICT)
+          .json({ message: "An error ocurred" });
+      }
+    } catch (error) {
+      return res
+        .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message });
+    }
   };
 
-  const deleteGroup = (req, res) => {
-   console.info("Eliminando Grupo");
+  const removeById = async (req, res) => {
+    console.log(2.1, "[Group] Controller Remove");
 
-    const deleted = groupService.deleteGroup(req.params.id, req.body);
+    try {
+      const removed = await groupService.removeById(req.params.id);
 
-    if (deleted) {
-      return res.status(201).json({ message: `Grupo Eliminado` });
+      if (removed) {
+        return res.status(StatusCodes.NO_CONTENT).send();
+      } else {
+        return res
+          .status(StatusCodes.CONFLICT)
+          .json({ message: "An error ocurred" });
+      }
+    } catch (error) {
+      return res
+        .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message });
     }
-
-    return res.status(404).json({
-      message: `Group with id ${req.params.id} does not exist`,
-    });
   };
 
   return {
-    getGroups,
     getById,
+    getAll,
     createGroup,
-    updateGroup,
-    deleteGroup,
+    editById,
+    removeById,
   };
 };
 

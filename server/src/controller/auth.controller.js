@@ -4,18 +4,12 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const AuthController = () => {
-  console.log(2, "[Auth] Controller");
 
   const userService = UserService();
 
   const login = async (req, res) => {
     const { email, password } = req.body;
-    const user = await userService.getByEmail(email);
-    console.log(user);
-
-    //ToDo: Revisar las contraseñas al momento de crearla y al momento de encriptar para comparar
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const user = await userService.getByCredentials(email, password);
 
     if (!user) {
       return res
@@ -28,11 +22,16 @@ const AuthController = () => {
       expiresIn: "1hr",
     });
 
-    res.status(StatusCodes.OK).json({ token });
+    res.status(StatusCodes.OK).json({ token : token, userId: user.id });
+  };
+
+  const logout = async (req, res) => {
+
   };
 
   return {
     login,
+    logout,
   };
 };
 
