@@ -17,7 +17,7 @@ export default function Groups({ valor, colour }) {
 
   useEffect(() => {
     serverConexion();
-  }, []);
+  }, [Group, Groups]);
 
   const serverConexion = async () => {
     axios
@@ -49,7 +49,7 @@ export default function Groups({ valor, colour }) {
   };
 
   return (
-    <div className="w-full relative p-10 mt-10">
+    <div className="w-full h-[100%] relative p-2 mt-[100px]">
       <div className="absolute top-5 right-10">
         <Button text={"Nuevo Grupo"} funcion={() => setIsModalOpen(true)} />
         {isModalOpen ? (
@@ -75,11 +75,13 @@ export default function Groups({ valor, colour }) {
       </div>
       <div>
         <p className="text-lg">
-          Debes: <br></br>
-          <span className="text-3xl font-semibold text-red-600">${valor}</span>
+          {valor ? "Debes:" : ""} <br></br>
+          <span className="text-3xl font-semibold text-red-600">
+            {valor ? `  $ ${valor}` : ""}
+          </span>
         </p>
       </div>
-      <div className="flex flex-col md:flex-row md:flex-wrap md:content-center justify-around">
+      <div className="mt-[50px] flex flex-col md:flex-row md:flex-wrap md:content-center justify-around items-center gap-3">
         {groups.map((group, index) => {
           return (
             <Group

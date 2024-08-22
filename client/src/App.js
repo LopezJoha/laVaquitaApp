@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Login from "./Components/Login";
 import Header from "./Components/Header";
 import { Route, Routes } from "react-router-dom";
@@ -13,9 +13,20 @@ import NotFoundPage from "./Components/Pages/NotFoundPage";
 import { useAuth } from "./Components/hooks/useAuth";
 
 function App() {
+  useEffect(() => {
+    const setVh = () => {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+    setVh();
+    window.addEventListener("resize", setVh);
+    return () => {
+      window.removeEventListener("resize", setVh);
+    };
+  }, []);
 
   return (
-    <div>
+    <div className="mainCointainerApp overflow-y-auto">
       <Routes>
         <Route element={<ProtectedRoutes />}>
           <Route path="/" element={<HomePage />}>

@@ -23,7 +23,6 @@ const GroupService = () => {
 
   const create = async (newGroup) => {
     console.log(3.1, "[Group] Service Create");
-    // const { name } = newGroup;
 
     const groupFound = await groupModel.findByName(newGroup.name);
 

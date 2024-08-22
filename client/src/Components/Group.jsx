@@ -3,19 +3,32 @@ import imagen from "../assets/images/vaquita-nb.png";
 
 export default function Group({ group, funcionEditar, funcionEliminar }) {
   return (
-    <div className="relative flex shadow-lg w-[95%] p-4 md:flex-col md:w-[350px]">
-      <img
-        className="absolute md:top-3 md:left-3"
-        src={imagen}
-        alt="imgGroup"
-        style={{ backgroundColor: group.bgColour }}
-        width={80}
-        height={80}
-      ></img>
-      <div className="flex flex-col ml-[85px]">
-        <h3 className="text-3l md:text-3xl md:font-medium md:text-center md:p-9 md:bg-[#36190D] md:text-white">
-          {group.name}
-        </h3>
+    <div className="flex shadow-lg w-full  max-w-[380px] gap-3">
+      <div className="flex justify-center items-center p-2 md:hidden">
+        <img
+          className="md:hidden rounded"
+          src={imagen}
+          alt="imgGroup"
+          style={{ backgroundColor: group.color }}
+          width={120}
+          height={80}
+        ></img>
+      </div>
+
+      <div className="w-full flex flex-col w-full ml-2 py-2">
+        <div className=" justify-center md:justify-start items-center md:items-start p-2 md:flex md:bg-[#36190D]">
+          <img
+            className=" hidden md:flex rounded"
+            src={imagen}
+            alt="imgGroup"
+            style={{ backgroundColor: group.color }}
+            width={80}
+            height={80}
+          ></img>
+          <h3 className=" w-full text-2xl md:text-3xl md:font-medium md:text-center  md:ml-2 md:text-white font-semibold">
+            {group.name}
+          </h3>
+        </div>
         <p className="text-2l">
           {group.debt}:{" "}
           <span style={{ color: group.textDebt }}>${group.valor}</span>
@@ -24,15 +37,15 @@ export default function Group({ group, funcionEditar, funcionEliminar }) {
           Participantes:
           <span className="text-amber-500"> {group.amigos}</span>
         </p>
-        <div className="flex ">
+        <div className="w-full flex justify-start md:justify-center items-center gap-2 ">
           <button
-            className="bg-[#36190D] p-1 px-2 mt-2 mr-2 text-white"
+            className="bg-[#36190D] p-1 px-2  text-white rounded"
             onClick={(e) => funcionEditar(e, group)}
           >
             Editar
           </button>
           <button
-            className="bg-[#36190D] p-1 px-2 mt-2 mr-2 text-white"
+            className="bg-[#36190D] p-1 px-2  text-white rounded"
             onClick={(e) => funcionEliminar(e, group)}
           >
             Eliminar

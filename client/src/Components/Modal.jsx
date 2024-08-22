@@ -33,7 +33,6 @@ export default function Modal({
   const [messageError, setMessageError] = useState("");
 
   const ownerUserId = useSelector((state) => state.userReducer.userId);
-  
 
   const createGroup = async (newGroup) => {
     console.log(ownerUserId);
@@ -126,8 +125,8 @@ export default function Modal({
     return null;
   }
   return (
-    <div className=" w-screen h-screen fixed top-0 left-0 bg-gray-200/50 flex content-center justify-center z-50">
-      <div className="w-[500px] h-[100%] md:h-[50%] relative bg-white min-h-[250px] shadow-lg p-10 mt-10 flex flex-col content-center justify-between">
+    <div className=" w-screen h-full fixed top-0 left-0 bg-gray-200/50 flex content-center justify-center z-50">
+      <div className="w-[500px] h-[100%] md:h-[100%] max-h-[420px] relative bg-white min-h-[250px] shadow-lg p-10 mt-10 flex flex-col content-center justify-between">
         <img
           className="absolute top-5 right-5 cursor-pointer w-[20px] h-[20px] "
           src={close}

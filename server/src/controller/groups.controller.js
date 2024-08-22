@@ -63,6 +63,7 @@ const GroupController = () => {
     try {
       const group = await groupService.create(sanitizedBody);
       console.log("Linea 65 ", group);
+      
 
       if (group) {
         console.log(res.status(StatusCodes.CREATED).json({ group }));

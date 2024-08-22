@@ -49,9 +49,10 @@ const GroupModel = () => {
 
   const create = async (entity) => {
     console.log(4.1, "[Database] Model create");
-
+    console.log(entity, "Linea 52 Group Model");
     const client = await connectionPool.connect();
     console.log(
+      entity.userid + "UserId",
       entity.owneruserid + " owner",
       entity.name + " name",
       entity.color + " color",
@@ -64,6 +65,7 @@ const GroupModel = () => {
     );
 
     client.release();
+    console.log(result.rows[0], "Linea 66 Hay que insertar en Tabla userGroup");
 
     return result.rows[0];
   };
