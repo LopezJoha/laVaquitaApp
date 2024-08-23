@@ -1,14 +1,16 @@
-import connectionPool from '../lib/connection.js';
+import connectionPool from "../lib/connection.js";
 
 const UserGroupModel = () => {
-  console.log(4, '[User Group] Model');
+  console.log(4, "[User Group] Model");
 
   const getById = async (id) => {
-    console.log(4.1, '[Database] Model getById');
+    console.log(4.1, "[Database] Model getById");
 
     const client = await connectionPool.connect();
 
-    const result = await client.query('SELECT * FROM USERGROUP WHERE id = $1', [id]);
+    const result = await client.query("SELECT * FROM USERGROUP WHERE id = $1", [
+      id,
+    ]);
 
     client.release();
 
@@ -16,11 +18,14 @@ const UserGroupModel = () => {
   };
 
   const getAllByGroupId = async (groupId) => {
-    console.log(4.1, '[Database] Model getAllByGroupId');
+    console.log(4.1, "[Database] Model getAllByGroupId");
 
     const client = await connectionPool.connect();
 
-    const result = await client.query('SELECT * FROM USERGROUP WHERE groupid = $1', [groupId]);
+    const result = await client.query(
+      "SELECT * FROM USERGROUP WHERE groupid = $1",
+      [groupId]
+    );
 
     client.release();
 
@@ -28,7 +33,7 @@ const UserGroupModel = () => {
   };
 
   const getAvailableUsersByGroupId = async (groupId) => {
-    console.log(4.1, '[Database] Model getAvailableUsersByGroupId');
+    console.log(4.1, "[Database] Model getAvailableUsersByGroupId");
 
     const client = await connectionPool.connect();
 
@@ -43,40 +48,62 @@ const UserGroupModel = () => {
   };
 
   const countByGroup = async (groupId) => {
-    console.log(4.1, '[Database] Model count by group');
+    console.log(4.1, "[Database] Model count by group");
 
     const client = await connectionPool.connect();
 
-    const result = await client.query('SELECT COUNT(*) FROM USERGROUP WHERE groupid = $1', [
-      groupId,
-    ]);
+    const result = await client.query(
+      "SELECT COUNT(*) FROM USERGROUP WHERE groupid = $1",
+      [groupId]
+    );
 
     client.release();
 
     return result.rows[0].count;
   };
 
-  const create = async (entity) => {
-    console.log(4.1, '[Database] Model create');
+  // const create = async ({ userId, groupId }) => {
+  //   console.log(4.1, "[Database] Model create");
+
+  //   const client = await connectionPool.connect();
+
+  //   const result = await client.query(
+  //     "INSERT INTO USERGROUP (userid, groupid) VALUES ($1, $2) RETURNING *",
+  //     [userId, groupId]
+  //   );
+
+  //   client.release();
+
+  //   return result.rows[0];
+  // };
+
+  const create = async ({ userId, groupId }) => {
+    console.log(4.1, "[Database] Model create");
 
     const client = await connectionPool.connect();
 
-    const result = await client.query(
-      'INSERT INTO USERGROUP (userid, groupid) VALUES ($1, $2) RETURNING *',
-      [entity.userId, entity.groupId]
-    );
-
-    client.release();
-
-    return result.rows[0];
+    try {
+      const result = await client.query(
+        "INSERT INTO USERGROUP (userid, groupid) VALUES ($1, $2) RETURNING *",
+        [userId, groupId]
+      );
+      return result.rows[0];
+    } catch (error) {
+      console.error("Error en la creación de userGroup:", error);
+      throw error;
+    } finally {
+      client.release();
+    }
   };
 
   const del = async (id) => {
-    console.log(4.1, '[Database] Model delete');
+    console.log(4.1, "[Database] Model delete");
 
     const client = await connectionPool.connect();
 
-    const result = await client.query('DELETE FROM USERGROUP WHERE id = $1', [id]);
+    const result = await client.query("DELETE FROM USERGROUP WHERE id = $1", [
+      id,
+    ]);
 
     client.release();
 
@@ -84,14 +111,14 @@ const UserGroupModel = () => {
   };
 
   const delByGroupAndUser = async (groupId, userId) => {
-    console.log(4.1, '[Database] Model delete');
+    console.log(4.1, "[Database] Model delete");
 
     const client = await connectionPool.connect();
 
-    const result = await client.query('DELETE FROM USERGROUP WHERE groupid = $1 and userid = $2', [
-      groupId,
-      userId,
-    ]);
+    const result = await client.query(
+      "DELETE FROM USERGROUP WHERE groupid = $1 and userid = $2",
+      [groupId, userId]
+    );
 
     client.release();
 

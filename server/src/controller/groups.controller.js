@@ -4,20 +4,16 @@ import { StatusCodes } from "http-status-codes";
 
 const GroupController = () => {
   console.log(2, "[Group] Controller");
-
   const groupService = GroupService();
 
   const getById = async (req, res) => {
     console.log(2.1, "[Group] Controller Get By Id");
-
     const group = await groupService.getById(req.params.id);
-
     if (!group) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ message: `Group with id ${req.params.id} does not exist` });
     }
-
     return res.status(StatusCodes.OK).json({
       group,
     });
@@ -25,9 +21,7 @@ const GroupController = () => {
 
   const getAll = async (req, res) => {
     console.log(2.1, "[Group] Controller Get All");
-
     const groups = await groupService.getAll();
-
     return res.status(StatusCodes.OK).json({
       groups,
     });
@@ -43,8 +37,6 @@ const GroupController = () => {
     });
 
     if (error) {
-      console.log(error);
-      console.log("Mensaje linea 47 ", StatusCodes.BAD_REQUEST);
       return res.status(StatusCodes.BAD_REQUEST).json({
         messages: error.details.map((detail) => detail.message),
       });
@@ -63,10 +55,8 @@ const GroupController = () => {
     try {
       const group = await groupService.create(sanitizedBody);
       console.log("Linea 65 ", group);
-      
 
       if (group) {
-        console.log(res.status(StatusCodes.CREATED).json({ group }));
         return res.status(StatusCodes.CREATED).json({ group });
       } else {
         return res
@@ -96,7 +86,6 @@ const GroupController = () => {
 
     try {
       const group = await groupService.editById(req.params.id, value);
-
       if (group) {
         return res.status(StatusCodes.OK).json({ group });
       } else {

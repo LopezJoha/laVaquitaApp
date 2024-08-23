@@ -31,12 +31,15 @@ const GroupService = () => {
     }
 
     const groupCreated = await groupModel.create(newGroup);
+    console.log(groupCreated);
 
     if (groupCreated) {
+      console.log("Ingreso para crear el grupo en userGroupModel");
       await userGroupModel.create({
         groupId: groupCreated.id,
-        userId: newGroup.ownerUserId,
+        userId: groupCreated.owneruserid,
       });
+      console.log("Despues de crear el userGroup, revisar");
     }
 
     return groupCreated;

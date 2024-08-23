@@ -47,27 +47,37 @@ const GroupModel = () => {
     return result.rows[0].count > 0;
   };
 
+  // const create = async (entity) => {
+  //   console.log(4.1, "[Database] Model create");
+  //   console.log(entity, "Linea 52 Group Model");
+  //   const client = await connectionPool.connect();
+
+  //   const result = await client.query(
+  //     "INSERT INTO GROUPS (owneruserid, name, color,createdAt) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *",
+  //     [entity.owneruserid, entity.name, entity.color]
+  //   );
+
+  //   client.release();
+  //   return result.rows[0];
+  // };
   const create = async (entity) => {
     console.log(4.1, "[Database] Model create");
     console.log(entity, "Linea 52 Group Model");
+
     const client = await connectionPool.connect();
-    console.log(
-      entity.userid + "UserId",
-      entity.owneruserid + " owner",
-      entity.name + " name",
-      entity.color + " color",
-      "linea 54 Model"
-    );
 
-    const result = await client.query(
-      "INSERT INTO GROUPS (owneruserid, name, color,createdAt) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *",
-      [entity.owneruserid, entity.name, entity.color]
-    );
-
-    client.release();
-    console.log(result.rows[0], "Linea 66 Hay que insertar en Tabla userGroup");
-
-    return result.rows[0];
+    try {
+      const result = await client.query(
+        "INSERT INTO GROUPS (owneruserid, name, color, createdAt) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *",
+        [entity.owneruserid, entity.name, entity.color]
+      );
+      return result.rows[0];
+    } catch (error) {
+      console.error("Error en la creación del grupo:", error);
+      throw error;
+    } finally {
+      client.release();
+    }
   };
 
   const update = async (id, entity) => {

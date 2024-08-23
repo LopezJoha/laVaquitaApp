@@ -20,8 +20,8 @@ const queries = [
   );`,
   `CREATE TABLE IF NOT EXISTS UserGroup (
     id SERIAL,
-    userId INTEGER,
-    groupId INTEGER,
+    userId INTEGER NOT NULL,
+    groupId INTEGER NOT NULL,
     createdAt DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(id),
     CONSTRAINT fk_user_group_user_id FOREIGN KEY(userId) REFERENCES Users(id),
