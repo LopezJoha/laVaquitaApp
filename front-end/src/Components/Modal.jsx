@@ -3,9 +3,7 @@ import Button from "./Ui/Button";
 import close from "../assets/images/close.png";
 import groupImg from "../assets/images/group.png";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
 
-const url = "http://localhost:3001/groups/";
 const colors = [
   "#FFFFFF", // white
   "#FFC0CB", // pink
@@ -26,85 +24,18 @@ export default function Modal({
   setIsEditing,
   setGroups,
   currentGroup,
+  createGroup,
+  editGroup,
+  onSubmit,
+  error,
+  setError,
+  messageError,
+  setMessageError,
+  inputValue,
+  setInputValue,
 }) {
   const [active, setActive] = useState(colors[0]);
-  const [inputValue, setInputValue] = useState("");
-  const [error, setError] = useState(false);
-  const [messageError, setMessageError] = useState("");
-
-  const ownerUserId = useSelector((state) => state.userReducer.userId);
-
-  const createGroup = async (newGroup) => {
-    console.log(ownerUserId);
-    console.log(newGroup);
-    axios({
-      method: "post",
-      url,
-      data: newGroup,
-    })
-      .then((response) => {
-        console.log(response);
-        console.log(response.data);
-        setError(false);
-        setMessageError("");
-        setInputValue("");
-      })
-      .catch((error) => {
-        console.error("Error creando el grupo", error);
-        console.log(error.response.data.message);
-
-        setError(true);
-        setMessageError(error.response.data.message);
-      });
-  };
-
-  const editGroup = async (id, group) => {
-    console.log(group);
-    axios({
-      method: "put",
-      url: `http://localhost:3001/groups/${id}`,
-      data: group,
-    })
-      .then((response) => {
-        setGroups((prevGroups) => {
-          let copy = [...prevGroups];
-          let groupIndex = copy.findIndex((group) => {
-            return group.id === id;
-          });
-
-          if (groupIndex >= 0) {
-            copy[groupIndex] = response.data;
-            console.log(response.data);
-          }
-          return copy;
-        });
-
-        setInputValue("");
-        alert("Grupo Modificado con exito!");
-        setIsOpen(false);
-        setIsEditing(false);
-      })
-      .catch((error) => {
-        console.error("Error actualizando el grupo", error);
-        console.log(error.response.data.message);
-        setError(true);
-        setMessageError(error.response.data.message);
-      });
-  };
-
-  const onSubmit = async () => {
-    if (!isEditing) {
-      console.log(ownerUserId);
-      await createGroup({
-        userid: ownerUserId,
-        owneruserid: ownerUserId,
-        name: inputValue,
-        color: active,
-      });
-    } else {
-      await editGroup(currentGroup.id, { name: inputValue, color: active });
-    }
-  };
+  const [isFocused, setIsFocused] = useState(false);
 
   const onInputChange = (e) => {
     setInputValue(e.target.value);
@@ -126,7 +57,7 @@ export default function Modal({
   }
   return (
     <div className=" w-screen h-full fixed top-0 left-0 bg-gray-200/50 flex content-center justify-center z-50">
-      <div className="w-[500px] h-[100%] md:h-[100%] max-h-[420px] relative bg-white min-h-[250px] shadow-lg p-10 mt-10 flex flex-col content-center justify-between">
+      <div className="w-[500px] max-h-[420px] relative bg-white min-h-[250px] shadow-lg p-10 mt-10 flex flex-col content-center justify-between">
         <img
           className="absolute top-5 right-5 cursor-pointer w-[20px] h-[20px] "
           src={close}
@@ -138,13 +69,19 @@ export default function Modal({
             {isEditing ? "Editar Grupo" : "Nuevo Grupo"}
           </h2>
         </div>
-        <div className="w-[90%] flex content-center justify-center border border-gray-300 rounded-md">
+        <div
+          className={`w-[100%] flex content-center justify-between border rounded-md p-1 ${
+            isFocused ? "border-blue-500" : "border-gray-300"
+          }`}
+        >
           <input
-            className=" "
+            className="w-full appearance-none border-none bg-transparent p-0 m-0 focus:outline-none focus:ring-0 focus:border-none"
             type="text"
             placeholder={isEditing ? currentGroup.name : " Nombre del grupo"}
             value={inputValue}
             onChange={(e) => onInputChange(e)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
           />
 
           <img src={groupImg} alt="group" className="w-[20px] h-[20px] m-2.5" />
@@ -169,7 +106,7 @@ export default function Modal({
         <div className="flex justify-center content-center">
           <Button
             text={isEditing ? "Editar" : "Crear"}
-            funcion={() => onSubmit()}
+            funcion={() => onSubmit(inputValue, active)}
             disabled={
               inputValue.length > 30 || inputValue.length === 0 ? true : false
             }

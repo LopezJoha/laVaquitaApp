@@ -1,10 +1,9 @@
 import { StatusCodes } from "http-status-codes";
 
-class NotFoundException extends Error {
-  constructor(message) {
-    super(message);
-    this.statusCode = StatusCodes.NOT_FOUND;
-  }
+function NotFoundException(message) {
+  const error = new Error(message);
+  error.statusCode = StatusCodes.NOT_FOUND;
+  return error;
 }
 
 export default NotFoundException;

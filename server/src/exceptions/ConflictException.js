@@ -1,10 +1,9 @@
 import { StatusCodes } from "http-status-codes";
 
-class ConflictException extends Error {
-  constructor(message) {
-    super(message);
-    this.statusCode = StatusCodes.CONFLICT;
-  }
+function ConflictException(message) {
+  const error = new Error(message);
+  error.statusCode = StatusCodes.CONFLICT;
+  return error;
 }
 
 export default ConflictException;

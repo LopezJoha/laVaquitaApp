@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 * {
-  
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -17,4 +16,42 @@ body {
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
   margin: 0 auto;
+}
+
+.dropDownMenu {
+  position: absolute;
+  top: 50px;
+  right: 5px;
+  background-color: white;
+
+  cursor: pointer;
+}
+
+.dropDownMenu::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  right: 20px;
+  height: 20px;
+  width: 20px;
+  transform: rotate(45deg);
+}
+
+.link {
+  display: flex;
+  min-width: 100px;
+  max-width: 120px;
+  justify-content: center;
+  align-items: center;
+  padding: auto;
+}
+
+.link:hover {
+  background-color: #36190d;
+  color: white;
+}
+
+.link:hover .sign-out-icon {
+  fill: white;
+  transition: fill 0.3s ease;
 }

@@ -5,7 +5,7 @@ import Header from "./Components/Header";
 import { Route, Routes } from "react-router-dom";
 import ProtectedRoutes from "./Components/Auth/ProtectedRoute";
 import HomePage from "./Components/Pages/HomePage";
-import Groups from "./Components/Pages/Groups";
+import Grupos from "./Components/Pages/Grupos";
 import Amigos from "./Components/Pages/Amigos";
 import Gastos from "./Components/Pages/Gastos";
 import MyAccountPage from "./Components/Pages/MyAccountPage";
@@ -30,7 +30,7 @@ function App() {
       <Routes>
         <Route element={<ProtectedRoutes />}>
           <Route path="/" element={<HomePage />}>
-            <Route path="/groups" element={<Groups />} />
+            <Route path="/groups" element={<Grupos />} />
             <Route path="/friends" element={<Amigos />} />
             <Route path="/expenses" element={<Gastos />} />
             <Route path="/my-account" element={<MyAccountPage />} />

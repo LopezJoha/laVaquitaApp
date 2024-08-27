@@ -64,9 +64,11 @@ const UserController = () => {
         token = jwt.sign(payload, process.env.JWT_SECRET, {
           expiresIn: "1hr",
         });
+        console.log(usuario);
       }
+      const userId = usuario.id;
 
-      return res.status(201).json({ token });
+      return res.status(201).json({ token, userId });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

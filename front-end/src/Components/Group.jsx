@@ -40,6 +40,12 @@ export default function Group({ group, funcionEditar, funcionEliminar }) {
         <div className="w-full flex justify-start md:justify-center items-center gap-2 ">
           <button
             className="bg-[#36190D] p-1 px-2  text-white rounded"
+            onClick={""}
+          >
+            Ver
+          </button>
+          <button
+            className="bg-[#36190D] p-1 px-2  text-white rounded"
             onClick={(e) => funcionEditar(e, group)}
           >
             Editar

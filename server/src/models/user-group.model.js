@@ -62,21 +62,6 @@ const UserGroupModel = () => {
     return result.rows[0].count;
   };
 
-  // const create = async ({ userId, groupId }) => {
-  //   console.log(4.1, "[Database] Model create");
-
-  //   const client = await connectionPool.connect();
-
-  //   const result = await client.query(
-  //     "INSERT INTO USERGROUP (userid, groupid) VALUES ($1, $2) RETURNING *",
-  //     [userId, groupId]
-  //   );
-
-  //   client.release();
-
-  //   return result.rows[0];
-  // };
-
   const create = async ({ userId, groupId }) => {
     console.log(4.1, "[Database] Model create");
 

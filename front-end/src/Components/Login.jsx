@@ -60,12 +60,10 @@ export default function Login({ setLoggedIn }) {
 
   const onNameChange = (e) => {
     setName(e.target.value);
-    console.log(e.target.value);
   };
 
   const onPasswordChange = (e) => {
     setPassword(e.target.value);
-    console.log(e.target.value);
   };
 
   const nameValidation = () => {
@@ -158,7 +156,6 @@ export default function Login({ setLoggedIn }) {
   const onEmailChange = (e) => {
     let emailLowerCase = e.target.value.toLowerCase();
     setEmail(emailLowerCase);
-    console.log(emailLowerCase);
   };
 
   const sendInfoLogin = async (e, email, password) => {
@@ -173,7 +170,6 @@ export default function Login({ setLoggedIn }) {
         data: { email: `${email}`, password: `${password}` },
       })
         .then((response) => {
-          console.log(response.data);
           if (response.data) {
             sessionStorage.setItem("token", response.data.token);
             dispatch(setToken(response.data.token));
@@ -188,7 +184,6 @@ export default function Login({ setLoggedIn }) {
         })
         .catch((error) => {
           console.error(error.response);
-          // console.log(error.response.data.message);
           console.log(error.message);
 
           setMsgErrorPassword("Email o password incorrecto!");
@@ -205,12 +200,12 @@ export default function Login({ setLoggedIn }) {
       data: newUser,
     })
       .then((response) => {
-        console.log(response);
-        console.log(response.data);
         if (response.data.token) {
           sessionStorage.setItem("token", response.data.token);
           window.dispatchEvent(new Event("storage"));
           navigate("/", { replace: true });
+          dispatch(setToken(response.data.token));
+          dispatch(setUserId(response.data.userId));
         } else {
           setMsgErrorPassword("An error ocurred");
         }
@@ -220,7 +215,6 @@ export default function Login({ setLoggedIn }) {
       .catch((error) => {
         console.error(error.response);
         // console.log(error.response.data.message);
-        console.log(error.message);
         if (error.response.status === 409) {
           setMsgErrorPassword("El correo ya se encuentra registrado!");
         } else {
@@ -240,7 +234,6 @@ export default function Login({ setLoggedIn }) {
     const wrongPassword = passwordValidation();
 
     if (!wrongName && !wrongEmail && !wrongPassword) {
-      console.log("Puedes Registrar el usuario");
       //Codigo del request
       await createUser({
         name: `${name}`,

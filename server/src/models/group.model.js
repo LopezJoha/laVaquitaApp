@@ -47,22 +47,8 @@ const GroupModel = () => {
     return result.rows[0].count > 0;
   };
 
-  // const create = async (entity) => {
-  //   console.log(4.1, "[Database] Model create");
-  //   console.log(entity, "Linea 52 Group Model");
-  //   const client = await connectionPool.connect();
-
-  //   const result = await client.query(
-  //     "INSERT INTO GROUPS (owneruserid, name, color,createdAt) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *",
-  //     [entity.owneruserid, entity.name, entity.color]
-  //   );
-
-  //   client.release();
-  //   return result.rows[0];
-  // };
   const create = async (entity) => {
     console.log(4.1, "[Database] Model create");
-    console.log(entity, "Linea 52 Group Model");
 
     const client = await connectionPool.connect();
 
@@ -83,16 +69,24 @@ const GroupModel = () => {
   const update = async (id, entity) => {
     console.log(4.1, "[Database] Model update");
 
-    const client = await connectionPool.connect();
+    let client;
+    try {
+      client = await connectionPool.connect();
 
-    const result = await client.query(
-      "UPDATE GROUPS set name = $1, color = $2 WHERE id = $3 RETURNING *",
-      [entity.name, entity.color, id]
-    );
+      const result = await client.query(
+        "UPDATE GROUPS set name = $1, color = $2 WHERE id = $3 RETURNING *",
+        [entity.name, entity.color, id]
+      );
 
-    client.release();
-
-    return result.rows[0];
+      return result.rows[0];
+    } catch (error) {
+      console.error("Error updating group:", error);
+      throw new Error("Failed to update group.");
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
   };
 
   const del = async (id) => {
