@@ -1,20 +1,18 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Header from "../Header";
 import { Outlet } from "react-router-dom";
-import SignOutIcon from "../../assets/images/SignOutIcon";
 
 export default function HomePage() {
-  
+  const [open, setOpen] = useState(false);
+  const [height, setHeight] = useState(0);
+
   return (
-    <div>
-      <div>
-        <Header />
+    <div className="h-full">
+      <div className={`h-[111px] lg:h-[77px]`}>
+        <Header open={open} setOpen={setOpen} />
       </div>
-      <div>
+      <div className="p-2 lg:p-4">
         <Outlet />
-      </div>
-      <div className="fixed bottom-2 left-2">
-        
       </div>
     </div>
   );

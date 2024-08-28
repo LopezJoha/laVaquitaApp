@@ -21,7 +21,7 @@ const GroupController = () => {
 
   const getAll = async (req, res) => {
     console.log(2.1, "[Group] Controller Get All");
-    const groups = await groupService.getAll();
+    const groups = await groupService.getAll(req.body.id);
     return res.status(StatusCodes.OK).json({
       groups,
     });
@@ -29,7 +29,6 @@ const GroupController = () => {
 
   const createGroup = async (req, res) => {
     console.log(2.1, "[Group] Controller Create");
-    console.log(req.body, "linea 38 controller");
 
     const { error, value } = groupsSchemaValidation.validate(req.body, {
       abortEarly: false,
@@ -120,12 +119,29 @@ const GroupController = () => {
     }
   };
 
+  const getGroupsOwnerId = async (req, res) => {
+    console.log(2.2, "[Groups OwnerId] Controller");
+    const ownerId = req.params.id;
+    try {
+      const result = await groupService.getGroupsOwnerId(ownerId);
+      return res.status(StatusCodes.OK).json({
+        result,
+      });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message });
+    }
+  };
+
   return {
     getById,
     getAll,
     createGroup,
     editById,
     removeById,
+    getGroupsOwnerId,
   };
 };
 

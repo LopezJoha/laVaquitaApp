@@ -6,6 +6,8 @@ import Button from "../Ui/Button.jsx";
 import Group from "../Group.jsx";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
+import GrupoInfo from "./GrupoInfo.jsx";
+import { Outlet, Navigate } from "react-router-dom";
 
 const baseUrl = "http://localhost:3001/groups";
 
@@ -13,24 +15,27 @@ export default function Groups({ valor }) {
   const [groups, setGroups] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [currentGroup, setCurrentGroup] = useState();
+  const [currentGroup, setCurrentGroup] = useState(null);
   const [error, setError] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [verGrupoInfo, setVerGrupoInfo] = useState(false);
   const [ownerUserId, setOwnerUserId] = useState(
     useSelector((state) => state.userReducer.userId)
   );
 
   useEffect(() => {
-    serverConexion();
+    getGroupsByOwnerId();
   }, []);
 
-  const serverConexion = async () => {
+  const getGroupsByOwnerId = async () => {
+    console.log(ownerUserId);
     axios
-      .get(baseUrl)
+      .get(`http://localhost:3001/groups/${ownerUserId}/owner`)
       .then((response) => {
-        setGroups(response.data.groups);
+        console.log(response.data);
+        setGroups(response.data.result);
       })
       .catch((error) => {
         console.log("Error fetching data", error);
@@ -118,60 +123,82 @@ export default function Groups({ valor }) {
     }
   };
 
+  const handleNavigate = (e, group) => {
+    e.preventDefault();
+    setCurrentGroup(group);
+    setVerGrupoInfo(true);
+  };
+
   return (
-    <div className="w-full h-[100%] relative p-2 mt-[100px]">
-      <div className="absolute top-5 right-10">
-        <Button text={"Nuevo Grupo"} funcion={() => setIsModalOpen(true)} />
-        {isModalOpen ? (
-          <Modal
-            isOpen={isModalOpen}
-            setIsOpen={setIsModalOpen}
-            closeModal={() => resetModalState()}
-            isEditing={isEditing}
-            setIsEditing={setIsEditing}
-            groups={groups}
-            setGroups={setGroups}
-            currentGroup={currentGroup}
-            onSubmit={toSendInfo}
-            createGroup={createGroup}
-            editGroup={editGroup}
-            error={error}
-            setError={setError}
-            messageError={messageError}
-            setMessageError={setMessageError}
-            inputValue={inputValue}
-            setInputValue={setInputValue}
-          />
-        ) : (
-          <DeleteModal
-            isDeleteModalOpen={isDeleteModalOpen}
-            setIsDeleteModalOpen={setIsDeleteModalOpen}
-            currentGroup={currentGroup}
-            groups={groups}
-            setGroups={setGroups}
-          />
-        )}
-      </div>
-      <div>
-        <p className="text-lg">
-          {valor ? "Debes:" : ""} <br></br>
-          <span className="text-3xl font-semibold text-red-600">
-            {valor ? `  $ ${valor}` : ""}
-          </span>
-        </p>
-      </div>
-      <div className="mt-[50px] flex flex-col md:flex-row md:flex-wrap md:content-center justify-around items-center gap-3">
-        {groups.map((group, index) => {
-          return (
-            <Group
-              key={group.name}
-              group={group}
-              funcionEditar={toEdit}
-              funcionEliminar={toEliminate}
-            />
-          );
-        })}
-      </div>
+    <div className="w-full relative p-2 ">
+      {verGrupoInfo && currentGroup ? (
+        <div>
+          <Navigate to={`groups/${currentGroup.id}`} />
+          <GrupoInfo group={currentGroup} />
+        </div>
+      ) : (
+        <div className="InfoGrupos">
+          <div className="flex flex-col">
+            <h2 className="font-plus-jakarta text-3xl lg:text-4xl font-medium text-[#582B1C]">
+              Listado de Grupos:
+            </h2>
+          </div>
+          <div className="absolute top-0 right-0">
+            <Button text={"Nuevo Grupo"} funcion={() => setIsModalOpen(true)} />
+            {isModalOpen ? (
+              <Modal
+                isOpen={isModalOpen}
+                setIsOpen={setIsModalOpen}
+                closeModal={() => resetModalState()}
+                isEditing={isEditing}
+                setIsEditing={setIsEditing}
+                groups={groups}
+                setGroups={setGroups}
+                currentGroup={currentGroup}
+                onSubmit={toSendInfo}
+                createGroup={createGroup}
+                editGroup={editGroup}
+                error={error}
+                setError={setError}
+                messageError={messageError}
+                setMessageError={setMessageError}
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+              />
+            ) : (
+              <DeleteModal
+                isDeleteModalOpen={isDeleteModalOpen}
+                setIsDeleteModalOpen={setIsDeleteModalOpen}
+                currentGroup={currentGroup}
+                groups={groups}
+                setGroups={setGroups}
+              />
+            )}
+          </div>
+          <div>
+            <p className="text-lg">
+              {valor ? "Debes:" : ""} <br></br>
+              <span className="text-3xl font-semibold text-red-600">
+                {valor ? `  $ ${valor}` : ""}
+              </span>
+            </p>
+          </div>
+          <div className="mt-[50px] flex flex-col md:flex-row md:flex-wrap md:content-center justify-around items-center gap-3">
+            {groups.map((group, index) => {
+              return (
+                <Group
+                  key={group.name}
+                  group={group}
+                  funcionEditar={toEdit}
+                  funcionEliminar={toEliminate}
+                  handleNavigate={handleNavigate}
+                />
+              );
+            })}
+          </div>
+          <Outlet />
+        </div>
+      )}
     </div>
   );
 }

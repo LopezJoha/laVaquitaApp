@@ -2,7 +2,6 @@ const SignOutIcon = ({
   width = "20px",
   height = "20px",
   fill = "black",
-  hoverFill = "white",
   onClick,
 }) => {
   return (

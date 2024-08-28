@@ -1,7 +1,12 @@
 import React from "react";
 import imagen from "../assets/images/vaquita-nb.png";
 
-export default function Group({ group, funcionEditar, funcionEliminar }) {
+export default function Group({
+  group,
+  funcionEditar,
+  funcionEliminar,
+  handleNavigate,
+}) {
   return (
     <div className="flex shadow-lg w-full  max-w-[380px] gap-3">
       <div className="flex justify-center items-center p-2 md:hidden">
@@ -40,7 +45,7 @@ export default function Group({ group, funcionEditar, funcionEliminar }) {
         <div className="w-full flex justify-start md:justify-center items-center gap-2 ">
           <button
             className="bg-[#36190D] p-1 px-2  text-white rounded"
-            onClick={""}
+            onClick={(e) => handleNavigate(e, group)}
           >
             Ver
           </button>

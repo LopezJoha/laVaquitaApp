@@ -77,12 +77,21 @@ const GroupService = () => {
     return groupModel.delete(id);
   };
 
+  const getGroupsOwnerId = async (id) => {
+    console.log(3.2, "[getgroupsByOwnerId] Service ");
+    console.log("El ID del propietario recibido es:", id);
+    const result = await groupModel.getGroupsOwnerId(id);
+    console.log("Linea 84: ", result);
+    return result;
+  };
+
   return {
     getAll,
     getById,
     create,
     editById,
     removeById,
+    getGroupsOwnerId,
   };
 };
 

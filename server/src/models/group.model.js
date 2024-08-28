@@ -101,6 +101,26 @@ const GroupModel = () => {
     return result.rowCount >= 1;
   };
 
+  const getGroupsOwnerId = async (id) => {
+    console.log("Model ", id);
+    let client;
+    try {
+      client = await connectionPool.connect();
+      const result = await client.query(
+        "SELECT * FROM groups WHERE owneruserid = $1",
+        [id]
+      );
+      return result.rows;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Error obteniendo los datos de Grupos por ownerId");
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  };
+
   return {
     getById,
     getAll,
@@ -108,6 +128,7 @@ const GroupModel = () => {
     delete: del,
     update,
     findByName,
+    getGroupsOwnerId,
   };
 };
 

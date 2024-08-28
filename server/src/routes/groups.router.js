@@ -6,9 +6,12 @@ const GroupRouter = () => {
 
   const registerRoutes = () => {
     const router = express.Router();
+
     router.get("/", groupController.getAll);
 
     router.get("/:id", groupController.getById);
+
+    router.get("/:id/owner", groupController.getGroupsOwnerId);
 
     router.post("/", groupController.createGroup);
 

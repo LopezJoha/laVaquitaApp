@@ -4,7 +4,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const AuthController = () => {
-
   const userService = UserService();
 
   const login = async (req, res) => {
@@ -22,12 +21,15 @@ const AuthController = () => {
       expiresIn: "1hr",
     });
 
-    res.status(StatusCodes.OK).json({ token : token, userId: user.id });
+    res.status(StatusCodes.OK).json({
+      token: token,
+      userId: user.id,
+      userName: user.name,
+      userEmail: user.email,
+    });
   };
 
-  const logout = async (req, res) => {
-
-  };
+  const logout = async (req, res) => {};
 
   return {
     login,

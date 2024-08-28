@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import logo from "../assets/images/vaquita-nb.png";
 import user from "../assets/images/user-48.png";
 
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import SignOutIcon from "../assets/images/SignOutIcon";
 
 const routes = [
@@ -28,7 +28,14 @@ const routesMenu = [
   },
 ];
 
-export default function Header({ children }) {
+const routeGrupoInfo = [
+  {
+    path: "/groupInfo",
+    label: "GrupoInfo",
+  },
+];
+
+export default function Header({ open, setOpen }) {
   const [active, setActive] = useState(0);
 
   const singOut = async (e) => {
@@ -46,7 +53,7 @@ export default function Header({ children }) {
   };
 
   return (
-    <div className="w-screen flex  lg:flex-row justify-between items-center bg-[#36190D] p-3 flex-wrap fixed top-0 left-0 z-10">
+    <div className="w-screen flex lg:flex-row justify-between items-center bg-[#36190D] p-3 flex-wrap fixed top-0 left-0 z-10">
       <div className="logo flex items-end justify-around order-1 grow-0">
         <img src={logo} alt="logo" width={45} />
         <p className="text-center text-2xl lg:text-3xl ml-2 font-medium lg:font-extrabold text-white">
@@ -54,18 +61,20 @@ export default function Header({ children }) {
         </p>
       </div>
 
-      <div className=" relativw grow-0 order-2 lg:order-3 h-fit p-1 bg-white rounded-[100px] cursor-pointer">
+      <div className="relative grow-0 order-2 lg:order-3 h-fit p-1 bg-white rounded-[100px] cursor-pointer">
         <img
           src={user}
           alt="user"
           width={25}
           height={25}
-          onClick={() => alert("Hola")}
+          onClick={() => setOpen(!open)}
+          onMouseEnter={() => setOpen(true)}
         />
-        <ul className="dropDownMenu">
+        <ul className={`dropDownMenu ${open ? "active" : "inactive"}`}>
           <li className="link">
             <Link to={"/my-account"}>Mi Perfi</Link>l
           </li>
+
           <li className="link">
             <SignOutIcon
               onClick={(e) => singOut(e)}
@@ -91,6 +100,7 @@ export default function Header({ children }) {
           </Link>
         ))}
       </div>
+     
     </div>
   );
 }

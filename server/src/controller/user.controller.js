@@ -67,8 +67,9 @@ const UserController = () => {
         console.log(usuario);
       }
       const userId = usuario.id;
+      const userName = usuario.name
 
-      return res.status(201).json({ token, userId });
+      return res.status(201).json({ token, userId, userName});
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

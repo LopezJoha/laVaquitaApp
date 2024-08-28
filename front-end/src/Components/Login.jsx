@@ -6,8 +6,12 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import EyeIcon from "../assets/EyeIcon";
 import EyeOffIcon from "../assets/EyeOffIcon";
 import { useSelector, useDispatch } from "react-redux";
-import { setToken } from "../store/slices/user";
-import { setUserId } from "../store/slices/user";
+import {
+  setToken,
+  setUserId,
+  setUserName,
+  setUserEmail,
+} from "../store/slices/user";
 
 const urlRegister = "http://localhost:3001/users/";
 const urlLogin = "http://localhost:3001/auth/login";
@@ -174,6 +178,8 @@ export default function Login({ setLoggedIn }) {
             sessionStorage.setItem("token", response.data.token);
             dispatch(setToken(response.data.token));
             dispatch(setUserId(response.data.userId));
+            dispatch(setUserName(response.data.userName));
+            dispatch(setUserEmail(response.data.userEmail));
             window.dispatchEvent(new Event("storage"));
             navigate("/", { replace: true });
           } else {
@@ -200,12 +206,15 @@ export default function Login({ setLoggedIn }) {
       data: newUser,
     })
       .then((response) => {
-        if (response.data.token) {
+        console.log(response.data);
+        if (response.data) {
           sessionStorage.setItem("token", response.data.token);
           window.dispatchEvent(new Event("storage"));
           navigate("/", { replace: true });
           dispatch(setToken(response.data.token));
           dispatch(setUserId(response.data.userId));
+          dispatch(setUserName(response.data.userName));
+          dispatch(setUserEmail(response.data.userEmail));
         } else {
           setMsgErrorPassword("An error ocurred");
         }
@@ -262,7 +271,7 @@ export default function Login({ setLoggedIn }) {
             <p className="font-plus-jakarta text-3xl font-normal text-[#582B1C] text-center">
               {showLogin
                 ? "Regístrate para crear una vaca con tus amigos"
-                : "Solo has click en el botón para  Iniciar sesión"}
+                : "Solo haz click en el botón para  Iniciar sesión"}
             </p>
           </div>
 
